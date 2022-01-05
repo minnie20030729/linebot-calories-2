@@ -14,12 +14,13 @@ import re
 app = Flask(__name__)
  
 # 必須放上自己的Channel Access Token
-line_bot_api = LineBotApi('5uqC6REb69jMZ6cvEJEm2UfjrWTS3VfCUjrcNeLfbG1aYhkRZwGgN2LWdrO1P960bF0Q46YsabvneGoIyxHUcXLTR14LFYWJD29kYqi3YPuKN2+vFZ0KYduImkd6VB98OIHdbhlNTb4TY+X0t17i/wdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi('0sgxc4zU4YQBb7n/FnHNs7ksEE1VcCPYUPn6ONSgVYmK9SMn3EHlSf0W5LqT2awT2XmlckW16ARg+vr+eN28Fujt6wmn3Br6glYlplaC8zjjqWlFZ7oa0tX70AePDTWXP+qyZgAeOPBAkyuKuPyWtgdB04t89/1O/w1cDnyilFU=')
  
 # 必須放上自己的Channel Secret
-handler = WebhookHandler('cdb91dfa796e70576a67ef1beb8e1f12')
+handler = WebhookHandler('70a64584bb53162ebe1a5401b3d763b1')
 
-'''
+
+
 #開啟richMenu
 rich_menu_to_create = RichMenu(
     size=RichMenuSize(width=2500, height=843),
@@ -44,7 +45,7 @@ print(rich_menu_id)
 with open("control.jpg", 'rb') as f:
     line_bot_api.set_rich_menu_image(rich_menu_id, "image/jpeg", f)
 line_bot_api.set_default_rich_menu(rich_menu_id)
-'''
+
 
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
