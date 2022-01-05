@@ -1,6 +1,6 @@
 # 載入LineBot所需要的模組
 from flask import Flask, request, abort
- 
+
 from linebot import (
     LineBotApi, WebhookHandler
 )
@@ -13,12 +13,12 @@ import re
 import csv
 
 app = Flask(__name__)
- 
+
 # 必須放上自己的Channel Access Token
-line_bot_api = LineBotApi('5uqC6REb69jMZ6cvEJEm2UfjrWTS3VfCUjrcNeLfbG1aYhkRZwGgN2LWdrO1P960bF0Q46YsabvneGoIyxHUcXLTR14LFYWJD29kYqi3YPuKN2+vFZ0KYduImkd6VB98OIHdbhlNTb4TY+X0t17i/wdB04t89/1O/w1cDnyilFU=0sgxc4zU4YQBb7n/FnHNs7ksEE1VcCPYUPn6ONSgVYmK9SMn3EHlSf0W5LqT2awT2XmlckW16ARg+vr+eN28Fujt6wmn3Br6glYlplaC8zjjqWlFZ7oa0tX70AePDTWXP+qyZgAeOPBAkyuKuPyWtgdB04t89/1O/w1cDnyilFU=')
- 
+line_bot_api = LineBotApi('5uqC6REb69jMZ6cvEJEm2UfjrWTS3VfCUjrcNeLfbG1aYhkRZwGgN2LWdrO1P960bF0Q46YsabvneGoIyxHUcXLTR14LFYWJD29kYqi3YPuKN2+vFZ0KYduImkd6VB98OIHdbhlNTb4TY+X0t17i/wdB04t89/1O/w1cDnyilFU=')
+
 # 必須放上自己的Channel Secret
-handler = WebhookHandler('70a64584bb53162ebe1a5401b3d763b1')
+handler = WebhookHandler('cdb91dfa796e70576a67ef1beb8e1f12')
 
 '''
 # 開啟richMenu
@@ -52,24 +52,24 @@ line_bot_api.set_default_rich_menu(rich_menu_id)
 def callback():
     # get X-Line-Signature header value
     signature = request.headers['X-Line-Signature']
- 
-  
+
+
     # get request body as text
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
- 
+
     # handle webhook body
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
         abort(400)
- 
+
     return 'OK'
 
 # 建立儲存食物資料的類別
 
 class BigFoodGroup:
-    
+
     def __init__(self, title, text, url):
         self.title = title
         self.text = text
@@ -83,9 +83,9 @@ class SmallFoodGroup:
         self.url = url
 
 class Food:
-    
+
     def __init__(self, title, text, url, calories):
-        
+
         self.title = title
         self.text = text
         self.url = url
@@ -136,58 +136,58 @@ def update_nextpage_info():
         f_1.close()
         f_2 = open("next_page.txt","w")
         f_2.close()
-        
+
     return show_lst
 
 # 讀取 database 並導入其資料
 
 food_data = {}
-    
+
 big_food_group_class = []
 big_food_group_text = []
-    
+
 small_food_group_class = []
 small_food_group_text = []
-    
+
 food_class = []
 food_text = []
 
 with open('food_data.csv', 'r', encoding = 'UTF-8-sig') as f:
     csvFile = csv.DictReader(f)
-    
+
     for row in csvFile:
-        
+
         # 判斷食物大類是否已存在，若不存在，貼進大類的 list 中，並創建成 class 資訊存起來
         if row['food_cate'] not in big_food_group_text:
-            
+
             big_food_group_text.append(row['food_cate'])
             temp_1 = BigFoodGroup(row['food_cate'], row['food_cate_dis'], row['food_cate_url'])
             big_food_group_class.append(temp_1)
-            
+
         # 判斷食物小類是否已存在，若不存在，貼進小類的 list 中，並創建成 class 資訊存起來
         if row['food_type'] not in small_food_group_text:
-            
+
             small_food_group_text.append(row['food_type'])
             temp_2 = SmallFoodGroup(row['food_type'], row['food_type_dis'], row['food_type_url'])
             small_food_group_class.append(temp_2)
-        
+
         # 判斷食物品項是否已存在，若不存在，貼進品項的 list 中，並創建成 class 資訊存起來
         if row['food'] not in food_text:
-            
+
             food_text.append(row['food'])
             temp_3 = Food(row['food'], row['food_dis'], row['food_url'], row['calories'])
             food_class.append(temp_3)
-        
+
         # 判斷食物大類是否在 dict 中
         # 若不在，新增食物大類、細項、品項
         if row['food_cate'] not in food_data:
             food_data[row['food_cate']] = {row['food_type']: [row['food']]}
-            
+
         # 若在，判斷細項是否於食物大類中
             # 若不在，新增食物細項、品項
         elif row['food_type'] not in food_data.get(row['food_cate']):
             food_data[row['food_cate']].update({row['food_type']:[row['food']]})
-            
+
             # 若在，新增食物、品項
         else:
             food_data[row['food_cate']][row['food_type']] += [row['food']]
@@ -388,7 +388,7 @@ def handle_message(event):
                       }
                     }
             )
-         
+
             line_bot_api.reply_message(event.reply_token,[inform_message, mainMenu_flex_message])
 
         except ValueError:
@@ -401,7 +401,7 @@ def handle_message(event):
         temp_small_group_lst = list(food_data[event.message.text].keys())
         build_nextpage_info(temp_small_group_lst)
         small_group_lst = update_nextpage_info()
-        
+
 
         # 製作成輸出的旋轉 columns 格式
         output_carousel_columns = []
@@ -434,13 +434,13 @@ def handle_message(event):
 
     # 當使用者輸入小類
     if event.message.text in small_food_group_text:
-                
+
         # 先找出其所屬的大類
         for key in food_data:
             if event.message.text in food_data[key]:
                 big_group_name = key
                 break
-            
+
         # 再找出其之下的品項並記憶
         temp_food_lst = food_data[big_group_name][event.message.text]
         build_nextpage_info(temp_food_lst)
@@ -518,7 +518,7 @@ def handle_message(event):
 '''
 
 
-    
+
 
 @handler.add(PostbackEvent)
 def handle_postback(event):
@@ -596,4 +596,3 @@ def handle_postback(event):
 import os
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
